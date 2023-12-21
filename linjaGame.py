@@ -12,6 +12,7 @@ class Juego:
         self.negras = fichas_negras
         self.turno = "negro"
         self.movimientos = 1
+        self.movimientos2 = 1
         self.jugada = 1
         
 # turno = "negro"
@@ -27,7 +28,7 @@ def posibles_movimientos_negro(matriz, cantidad_movimientos, ficha_pocision):
                 movimientos.append([i, j - cantidad_movimientos])
                 if i - 1 > 0 and matriz[i - 1][j - cantidad_movimientos] == 0:
                     movimientos.append([i - 1, j - cantidad_movimientos])
-                if i + 1 < len(matriz[0]) and matriz[i + 1][j - cantidad_movimientos] == 0:
+                if i + 1 < len(matriz) and matriz[i + 1][j - cantidad_movimientos] == 0:
                     movimientos.append([i + 1, j - cantidad_movimientos])
         else: 
             return movimientos
@@ -52,12 +53,12 @@ def posibles_movimientos_rojo(matriz, cantidad_movimientos, ficha_pocision):
     j = ficha_pocision[1]
     
     if cantidad_movimientos >= 1:
-        if j + cantidad_movimientos > 0:
+        if j + cantidad_movimientos < len(matriz[0]):
             if matriz[i][j + cantidad_movimientos] == 0:
                 movimientos.append([i, j + cantidad_movimientos])
                 if i - 1 > 0 and matriz[i - 1][j + cantidad_movimientos] == 0:
                     movimientos.append([i - 1, j + cantidad_movimientos])
-                if i + 1 < len(matriz[0]) and matriz[i + 1][j + cantidad_movimientos] == 0:
+                if i + 1 < len(matriz) and matriz[i + 1][j + cantidad_movimientos] == 0:
                     movimientos.append([i + 1, j + cantidad_movimientos])
         else: 
             return movimientos
@@ -65,13 +66,13 @@ def posibles_movimientos_rojo(matriz, cantidad_movimientos, ficha_pocision):
     if cantidad_movimientos >= 2:
         if i - 2 > 0 and matriz[i - 2][j + cantidad_movimientos] == 0:
             movimientos.append([i - 2, j + cantidad_movimientos])
-        if i + 2 < len(matriz[0]) and matriz[i + 2][j + cantidad_movimientos] == 0:
+        if i + 2 < len(matriz) and matriz[i + 2][j + cantidad_movimientos] == 0:
             movimientos.append([i + 2, j + cantidad_movimientos])
             
     if cantidad_movimientos >= 3:
         if i - 3 > 0 and matriz[i - 3][j + cantidad_movimientos] == 0:
             movimientos.append([i - 3, j + cantidad_movimientos])
-        if i + 3 < len(matriz[0]) and matriz[i + 3][j + cantidad_movimientos] == 0:
+        if i + 3 < len(matriz) and matriz[i + 3][j + cantidad_movimientos] == 0:
             movimientos.append([i + 3, j + cantidad_movimientos])
             
     return movimientos
@@ -98,56 +99,6 @@ def contar_fichas_en_columna(matriz, columna):
     fichas_en_columna = sum(matriz[fila][columna] != 0 for fila in range(filas))
     return fichas_en_columna
     
-# def generar_estados(juego):
-#     lista_aplanada = []
-#     matrices_modificadas = []
-    
-#     if juego.turno == "negro":
-#         lista_anidada = []
-#         for posicion in juego.negras:
-#             estados = posibles_movimientos_negro(juego.estadoInicial, juego.movimientos, posicion)
-#             lista_anidada.append(estados)
-#         lista_aplanada = [sublista for lista_externa in lista_anidada for sublista in lista_externa]
-        
-#         for coordenada in lista_aplanada:
-#             fila, columna = coordenada
-#             matriz_modificada = [fila.copy() for fila in juego.estadoInicial]
-#             matriz_modificada[fila][columna] = 2
-#             coordenada_1, coordenada_2 = obtener_coordenadas(matriz_modificada)
-#             nuevoEstadoJuego = Juego(matriz_modificada, coordenada_1, coordenada_2)
-#             fichas_en_columna = contar_fichas_en_columna(matriz_modificada, columna)
-        
-#         if fichas_en_columna - 1 > 0 and juego.jugada == 1:
-#             juego.turno = "negro"
-#             juego.jugada = 2
-#         else:
-#             juego.turno = "rojo"
-            
-#         matrices_modificadas.append(nuevoEstadoJuego)
-#     else:
-#         lista_anidada = []
-#         for posicion in juego.rojas:
-#             estados = posibles_movimientos_rojo(juego.estadoInicial, juego.movimientos, posicion)
-#             lista_anidada.append(estados)
-#         lista_aplanada = [sublista for lista_externa in lista_anidada for sublista in lista_externa]
-        
-#         for coordenada in lista_aplanada:
-#             fila, columna = coordenada
-#             matriz_modificada = [fila.copy() for fila in juego.estadoInicial]
-#             matriz_modificada[fila][columna] = 1
-#             coordenada_1, coordenada_2 = obtener_coordenadas(matriz_modificada)
-#             nuevoEstadoJuego = Juego(matriz_modificada, coordenada_1, coordenada_2)
-#             fichas_en_columna = contar_fichas_en_columna(matriz_modificada, columna)
-            
-#             if fichas_en_columna - 1 > 0 and juego.jugada == 1:
-#                 juego.turno = "negro"
-#                 juego.jugada = 2
-#             else:
-#                 juego.turno = "rojo"
-                
-#             matrices_modificadas.append(nuevoEstadoJuego)
-
-#     return matrices_modificadas
 
 def generar_estados(juego):
     lista_aplanada = []
@@ -168,12 +119,13 @@ def generar_estados(juego):
                 nuevoEstadoJuego = Juego(matriz_modificada, coordenada_1, coordenada_2)
                 fichas_en_columna = contar_fichas_en_columna(matriz_modificada, columna)
                 nuevoEstadoJuego.movimientos = fichas_en_columna - 1
+                juego.movimientos2 = fichas_en_columna - 1
             
                 if nuevoEstadoJuego.movimientos > 0 and juego.jugada == 1:
-                    juego.turno = "negro"
-                    juego.jugada = 2
+                    nuevoEstadoJuego.turno = "negro"
+                    nuevoEstadoJuego.jugada = 2
                 else:
-                    juego.turno = "rojo"
+                    nuevoEstadoJuego.turno = "rojo"
                     
                 matrices_modificadas.append(nuevoEstadoJuego)
     else:
@@ -191,13 +143,14 @@ def generar_estados(juego):
                 nuevoEstadoJuego = Juego(matriz_modificada, coordenada_1, coordenada_2)
                 fichas_en_columna = contar_fichas_en_columna(matriz_modificada, columna)
                 nuevoEstadoJuego.movimientos = fichas_en_columna - 1
+                juego.movimientos2 = fichas_en_columna - 1
                 # print(nuevoEstadoJuego.movimientos)
                 
-                if fichas_en_columna > 0 and juego.jugada == 1:
-                    juego.turno = "negro"
-                    juego.jugada = 2
+                if nuevoEstadoJuego.movimientos > 0 and juego.jugada == 1:
+                    nuevoEstadoJuego.turno = "rojo"
+                    nuevoEstadoJuego.jugada = 2
                 else:
-                    juego.turno = "rojo"
+                    nuevoEstadoJuego.turno = "negro"
                     
                 matrices_modificadas.append(nuevoEstadoJuego)
     
@@ -292,27 +245,21 @@ def minimax(juego, profundidad, es_maximizando):
                 mejor_jugada = hijo
         return mejor_valor, mejor_jugada
 
-def encontrar_movimiento(original, modificada):
-    filas = len(original)
-    columnas = len(original[0])
+def comparar_matrices(matriz_original, matriz_modificada):
+    origen = None
+    destino = None
 
-    for fila in range(filas):
-        for columna in range(columnas):
-            if original[fila][columna] != modificada[fila][columna]:
-                origen = (fila, columna)
-                destino = None
+    # Recorremos los elementos de las matrices
+    for i in range(len(matriz_original)):
+        for j in range(len(matriz_original[i])):
+            if matriz_original[i][j] != matriz_modificada[i][j]:
+                # Si encontramos un elemento distinto, verificamos si es el origen o destino
+                if matriz_original[i][j] == 2:
+                    origen = (i, j)
+                elif matriz_modificada[i][j] == 2:
+                    destino = (i, j)
 
-                # Buscar el destino de la ficha en la matriz modificada
-                for i in range(filas):
-                    for j in range(columnas):
-                        if original[fila][columna] == modificada[i][j]:
-                            destino = (i, j)
-                            break
-
-                return origen, destino
-
-    # Si no se encontraron movimientos
-    return None, None
+    return origen, destino
 
 def imprimir_matriz(matriz):
     for fila in matriz:
@@ -320,14 +267,38 @@ def imprimir_matriz(matriz):
             print(elemento, end=" ")  # end=" " evita que se añada una nueva línea después de cada fila
         print()  # Agrega una nueva línea después de cada fila
 
-def limaGame(juego):
+def leer_matriz_desde_archivo(nombre_archivo):
+    matriz = []
+
+    with open(nombre_archivo, 'r') as archivo:
+        for linea in archivo:
+            fila = [int(valor) for valor in linea.split()]
+            matriz.append(fila)
+
+    return matriz
+
+def linjaGame(juego):
     _, mejor_juego = minimax(juego, 3, True)
     
+    print("---------jugada 1--------")
     imprimir_matriz(mejor_juego.estadoInicial)
     
-    origen, destino = encontrar_movimiento(juego.estadoInicial, mejor_juego.estadoInicial)
+    origen, destino = comparar_matrices(juego.estadoInicial, mejor_juego.estadoInicial)
+    print(origen, destino)
     
-    return origen, destino
+    if juego.movimientos2 > 0:
+        mejor_juego.movimientos = juego.movimientos2
+        _, mejor_juego2 = minimax(mejor_juego, 3, True)
+        
+        print("---------jugada 2--------")
+        imprimir_matriz(mejor_juego2.estadoInicial)
+        origen, destino = comparar_matrices(mejor_juego.estadoInicial, mejor_juego2.estadoInicial)
+        print(origen, destino)
+    
+    # imprimir_matriz(juego.estadoInicial)
+    
+    
+    # return origen, destino
 
 matriz_ejemplo = [
     [1, 2, 2, 2, 2, 2, 2, 2],
@@ -338,13 +309,42 @@ matriz_ejemplo = [
     [1, 1, 1, 1, 1, 1, 1, 2]
 ]
 
-coordenada_1, coordenada_2 = obtener_coordenadas(matriz_ejemplo)
+# coordenada_1, coordenada_2 = obtener_coordenadas(matriz_ejemplo)
 
-inicioJuego = Juego(matriz_ejemplo, coordenada_1, coordenada_2)
+# inicioJuego = Juego(matriz_ejemplo, coordenada_1, coordenada_2)
 
-origen, destino = limaGame(inicioJuego)
+# linjaGame(inicioJuego)
+# origen, destino = linjaGame(inicioJuego)
 
-print(origen, destino)
+# print(origen, destino)
+
+def main():
+    while True:
+        print("\n--- Menú ---")
+        print("1. Leer matriz desde archivo")
+        print("2. Salir")
+
+        opcion = input("Seleccione una opción (1/2): ")
+
+        if opcion == "1":
+            nombre_archivo = input("Ingrese el nombre del archivo: ")
+            try:
+                
+                matriz_resultante = leer_matriz_desde_archivo(nombre_archivo)
+                print("\nMatriz leída correctamente:")
+                coordenada_1, coordenada_2 = obtener_coordenadas(matriz_resultante)
+                inicioJuego = Juego(matriz_ejemplo, coordenada_1, coordenada_2)
+                linjaGame(inicioJuego)  
+            except FileNotFoundError:
+                print(f"¡Error! El archivo '{nombre_archivo}' no existe.")
+        elif opcion == "2":
+            print("Saliendo del programa.")
+            break
+        else:
+            print("Opción no válida. Intente nuevamente.")
+
+if __name__ == "__main__":
+    main()
 
         
 

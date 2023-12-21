@@ -188,49 +188,81 @@ coordenadas_1, coordenadas_2 = obtener_coordenadas(matriz_ejemplo)
 
 
 
-def encontrar_movimiento(original, modificada):
-    filas = len(original)
-    columnas = len(original[0])
+def comparar_matrices(matriz_original, matriz_modificada):
+    origen = None
+    destino = None
 
-    for fila in range(filas):
-        for columna in range(columnas):
-            if original[fila][columna] != modificada[fila][columna]:
-                origen = (fila, columna)
-                destino = None
+    # Recorremos los elementos de las matrices
+    for i in range(len(matriz_original)):
+        for j in range(len(matriz_original[i])):
+            if matriz_original[i][j] != matriz_modificada[i][j]:
+                # Si encontramos un elemento distinto, verificamos si es el origen o destino
+                if matriz_original[i][j] == 2:
+                    origen = (i, j)
+                elif matriz_modificada[i][j] == 2:
+                    destino = (i, j)
 
-                # Buscar el destino de la ficha en la matriz modificada
-                for i in range(filas):
-                    for j in range(columnas):
-                        if original[fila][columna] == modificada[i][j]:
-                            destino = (i, j)
-                            break
-
-                return origen, destino
-
-    # Si no se encontraron movimientos
-    return None, None
+    return origen, destino
 
 # Ejemplo de uso
+# matriz_original = [
+#     [0, 0, 0, 0, 0, 0, 0, 0],
+#     [0, 0, 0, 0, 0, 0, 0, 0],
+#     [0, 0, 0, 0, 0, 0, 0, 0],
+#     [0, 0, 0, 0, 1, 0, 0, 0],
+#     [0, 0, 0, 0, 0, 0, 0, 0],
+#     [0, 0, 0, 0, 0, 0, 0, 0]
+# ]
+
+# matriz_modificada = [
+#     [0, 0, 0, 0, 0, 0, 0, 0],
+#     [0, 0, 0, 0, 0, 0, 0, 0],
+#     [0, 0, 0, 0, 0, 0, 0, 0],
+#     [0, 0, 0, 0, 0, 0, 0, 0],
+#     [0, 0, 0, 0, 1, 0, 0, 0],
+#     [0, 0, 0, 0, 0, 0, 0, 0]
+# ]
 matriz_original = [
-    [0, 0, 0, 0],
-    [0, 0, 1, 0],
-    [0, 0, 2, 0],
-    [0, 0, 0, 0]
+    [1, 2, 2, 2, 2, 2, 2, 2],
+    [1, 0, 0, 0, 0, 0, 0, 2],
+    [1, 0, 0, 0, 0, 0, 0, 2],
+    [0, 1, 0, 0, 0, 0, 0, 2],
+    [1, 0, 0, 0, 0, 0, 0, 2],
+    [1, 1, 1, 1, 1, 1, 1, 2]
 ]
-
 matriz_modificada = [
-    [0, 0, 0, 0],
-    [0, 0, 0, 0],
-    [0, 1, 2, 0],
-    [0, 0, 0, 0]
+    [1, 2, 2, 2, 2, 2, 2, 2],
+    [1, 0, 0, 0, 0, 0, 2, 0],
+    [1, 0, 0, 0, 0, 0, 0, 2],
+    [0, 1, 0, 0, 0, 0, 0, 2],
+    [1, 0, 0, 0, 0, 0, 0, 2],
+    [1, 1, 1, 1, 1, 1, 1, 2]
 ]
 
-origen, destino = encontrar_movimiento(matriz_original, matriz_modificada)
+# origen, destino = comparar_matrices(matriz_original, matriz_modificada)
 
-if origen is not None and destino is not None:
-    print(f"La ficha en la posición {origen} se movió a la posición {destino}")
-else:
-    print("No se encontraron movimientos")
+# if origen is not None and destino is not None:
+#     print(f"Se movió desde {origen} hasta {destino}")
+# else:
+#     print("No se encontraron movimientos")
+
+def leer_matriz_desde_archivo(nombre_archivo):
+    matriz = []
+
+    with open(nombre_archivo, 'r') as archivo:
+        for linea in archivo:
+            fila = [int(valor) for valor in linea.split()]
+            matriz.append(fila)
+
+    return matriz
+
+# Ejemplo de uso
+nombre_archivo = 'matriz.txt'  # Reemplaza con el nombre de tu archivo
+matriz_resultante = leer_matriz_desde_archivo(nombre_archivo)
+
+# Imprimir la matriz resultante
+for fila in matriz_resultante:
+    print(fila)
 
 
 
